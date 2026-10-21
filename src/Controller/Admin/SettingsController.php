@@ -22,6 +22,22 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class SettingsController extends FrameworkBundleAdminController
 {
+    private ?FormHandlerInterface $generalFormDataHandler = null;
+    private ?FormHandlerInterface $webpFormDataHandler = null;
+    private ?object $eraser = null;
+    private ?object $htaccessGenerator = null;
+
+    public function __construct(
+        ?FormHandlerInterface $generalFormDataHandler = null,
+        ?FormHandlerInterface $webpFormDataHandler = null,
+        ?object $eraser = null,
+        ?object $htaccessGenerator = null
+    ) {
+        $this->generalFormDataHandler = $generalFormDataHandler;
+        $this->webpFormDataHandler = $webpFormDataHandler;
+        $this->eraser = $eraser;
+        $this->htaccessGenerator = $htaccessGenerator;
+    }
     /**
      * @AdminSecurity(
      *     "is_granted(['read'], request.get('_legacy_controller'))",
@@ -113,7 +129,7 @@ class SettingsController extends FrameworkBundleAdminController
     public function processWebpEraseImages(Request $request)
     {
         $time_start = microtime(true);
-        $eraser = $this->get('oksydan.module.is_themecore.core.webp.webp_files_eraser');
+        $eraser = $this->eraser ?? $this->get('oksydan.module.is_themecore.core.webp.webp_files_eraser');
 
         switch ($request->get('type')) {
             case 'all':
@@ -166,7 +182,7 @@ class SettingsController extends FrameworkBundleAdminController
                 $saveErrors = $formHandler->save($data);
 
                 if (!empty($data['webp_enabled'])) {
-                    $generator = $this->get('oksydan.module.is_themecore.core.htaccess.htaccess_generator');
+                    $generator = $this->htaccessGenerator ?? $this->get('oksydan.module.is_themecore.core.htaccess.htaccess_generator');
 
                     $generator->generate((bool) $data['webp_enabled']);
                     $generator->writeFile();
@@ -194,6 +210,10 @@ class SettingsController extends FrameworkBundleAdminController
      */
     private function getGeneralFormHandler()
     {
+        if ($this->generalFormDataHandler instanceof FormHandlerInterface) {
+            return $this->generalFormDataHandler;
+        }
+
         /** @var FormHandlerInterface */
         $formDataHandler = $this->get('oksydan.module.is_themecore.form.settings.general_form_data_handler');
 
@@ -205,6 +225,10 @@ class SettingsController extends FrameworkBundleAdminController
      */
     private function getWebpFormHandler()
     {
+        if ($this->webpFormDataHandler instanceof FormHandlerInterface) {
+            return $this->webpFormDataHandler;
+        }
+
         /** @var FormHandlerInterface */
         $formDataHandler = $this->get('oksydan.module.is_themecore.form.settings.webp_form_data_handler');
 

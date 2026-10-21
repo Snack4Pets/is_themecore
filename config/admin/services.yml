@@ -4,6 +4,15 @@ services:
   _defaults:
     public: true
 
+  Oksydan\Module\IsThemeCore\Controller\Admin\SettingsController:
+    class: 'Oksydan\Module\IsThemeCore\Controller\Admin\SettingsController'
+    public: true
+    arguments:
+      $generalFormDataHandler: '@oksydan.module.is_themecore.form.settings.general_form_data_handler'
+      $webpFormDataHandler: '@oksydan.module.is_themecore.form.settings.webp_form_data_handler'
+      $eraser: '@oksydan.module.is_themecore.core.webp.webp_files_eraser'
+      $htaccessGenerator: '@oksydan.module.is_themecore.core.htaccess.htaccess_generator'
+
   oksydan.module.is_themecore.form.settings.general_type:
     class: 'Oksydan\Module\IsThemeCore\Form\Settings\GeneralType'
     parent: "form.type.translatable.aware"
