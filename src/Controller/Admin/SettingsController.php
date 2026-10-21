@@ -8,7 +8,8 @@ use PrestaShop\PrestaShop\Core\Form\FormHandlerInterface;
 use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
 use PrestaShopBundle\Security\Annotation\AdminSecurity;
 use PrestaShopBundle\Security\Annotation\DemoRestricted;
-use PrestaShopBundle\Security\Annotation\ModuleActivated;
+use PrestaShopBundle\Security\Attribute\AdminSecurity as AdminSecurityAttribute;
+use PrestaShopBundle\Security\Attribute\DemoRestricted as DemoRestrictedAttribute;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,6 +32,7 @@ class SettingsController extends FrameworkBundleAdminController
      *
      * @return Response
      */
+    #[AdminSecurityAttribute("is_granted(['read'], request.get('_legacy_controller'))", message: 'You do not have permission to access this.')]
     public function indexAction(Request $request): Response
     {
         $generalFormDataHandler = $this->getGeneralFormHandler();
@@ -61,6 +63,8 @@ class SettingsController extends FrameworkBundleAdminController
      *
      * @throws \LogicException
      */
+    #[AdminSecurityAttribute("is_granted('update', request.get('_legacy_controller')) && is_granted('create', request.get('_legacy_controller')) && is_granted('delete', request.get('_legacy_controller'))", message: 'You do not have permission to update this.', redirectRoute: 'is_themecore_module_settings')]
+    #[DemoRestrictedAttribute(redirectRoute: 'is_themecore_module_settings')]
     public function processGeneralFormAction(Request $request)
     {
         return $this->processForm(
@@ -85,6 +89,8 @@ class SettingsController extends FrameworkBundleAdminController
      *
      * @throws \LogicException
      */
+    #[AdminSecurityAttribute("is_granted('update', request.get('_legacy_controller')) && is_granted('create', request.get('_legacy_controller')) && is_granted('delete', request.get('_legacy_controller'))", message: 'You do not have permission to update this.', redirectRoute: 'is_themecore_module_settings')]
+    #[DemoRestrictedAttribute(redirectRoute: 'is_themecore_module_settings')]
     public function processWebpFormAction(Request $request)
     {
         return $this->processForm(
@@ -103,6 +109,7 @@ class SettingsController extends FrameworkBundleAdminController
      *
      * @throws \LogicException
      */
+    #[DemoRestrictedAttribute(redirectRoute: 'is_themecore_module_settings')]
     public function processWebpEraseImages(Request $request)
     {
         $time_start = microtime(true);
