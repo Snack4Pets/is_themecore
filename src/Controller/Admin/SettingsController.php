@@ -15,11 +15,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * Class SettingsController
- *
- * @ModuleActivated(moduleName="is_themecore", redirectRoute="admin_module_manage")
- */
 class SettingsController extends FrameworkBundleAdminController
 {
     private ?FormHandlerInterface $generalFormDataHandler = null;
